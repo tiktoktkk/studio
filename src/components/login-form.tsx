@@ -68,26 +68,6 @@ export function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
   
-  useEffect(() => {
-    // Mock IP-based country detection
-    fetch('https://ipapi.co/json/')
-      .then(response => response.json())
-      .then(data => {
-        const countryName = data.country_name;
-        const matchingCountry = countries.find(c => c.name === countryName);
-        if (matchingCountry) {
-          setCountry(matchingCountry.name);
-          setValue("country", matchingCountry.name);
-          setValue("countryCode", matchingCountry.code);
-        }
-      })
-      .catch(() => {
-        setCountry("United States");
-        setValue("country", "United States");
-        setValue("countryCode", "+1");
-      });
-  }, []);
-
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -100,6 +80,30 @@ export function LoginForm() {
   });
 
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset, setError, setValue, watch } = form;
+
+  useEffect(() => {
+    // IP-based country detection
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        const countryName = data.country_name;
+        const matchingCountry = countries.find(c => c.name === countryName);
+        if (matchingCountry) {
+          setCountry(matchingCountry.name);
+          setValue("country", matchingCountry.name);
+          setValue("countryCode", matchingCountry.code);
+        }
+      })
+      .catch(() => {
+        // Fallback to a default country
+        const defaultCountry = countries.find(c => c.name === "United States");
+        if(defaultCountry) {
+          setCountry(defaultCountry.name);
+          setValue("country", defaultCountry.name);
+          setValue("countryCode", defaultCountry.code);
+        }
+      });
+  }, [setValue]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -310,7 +314,9 @@ export function LoginForm() {
               );
               if (newCountry) {
                 setValue("country", newCountry.name);
-                setValue("countryCode", newCountry.code);
+                if (activeTab === 'phone') {
+                  setValue("countryCode", newCountry.code);
+                }
                 setCountry(newCountry.name);
               }
             }} value={country}>
@@ -348,3 +354,5 @@ export function LoginForm() {
     </div>
   );
 }
+
+    
