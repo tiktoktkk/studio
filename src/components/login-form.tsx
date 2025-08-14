@@ -77,7 +77,7 @@ export function LoginForm() {
     },
   });
 
-  const { control, handleSubmit, formState: { errors, isSubmitting }, reset, setError } = form;
+  const { control, handleSubmit, formState: { errors, isSubmitting }, reset, setError, setValue, watch } = form;
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -188,7 +188,9 @@ export function LoginForm() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Country" />
+                            <SelectValue>
+                              {countries.find(c => c.name === country)?.code}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
