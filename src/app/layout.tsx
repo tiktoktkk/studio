@@ -28,7 +28,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <header className="absolute top-0 left-0 p-4 z-10">
-          <Link href="/">
+          <Link href="/login">
             <Image
               src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/500px-TikTok_logo.svg.png?20200415104610"
               alt="TikTok Logo"
