@@ -27,7 +27,7 @@ export default function RootLayout({
         <header className="absolute top-0 left-0 p-4 z-10">
           <Link href="/">
             <Image
-              src="https://static.vecteezy.com/system/resources/previews/016/716/450/non_2x/tiktok-icon-free-png.png"
+              src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/500px-TikTok_logo.svg.png?20200415104610"
               alt="TikTok Logo"
               width={100}
               height={30}
