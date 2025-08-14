@@ -46,7 +46,7 @@ const formSchema = z.discriminatedUnion("loginType", [
     country: z.string(),
     countryCode: z.string().min(1, "Country code is required"),
     phone: z.string().regex(/^\d{1,15}$/, "Please enter a valid phone number."),
-    password: z.string().min(8, "Password must be at least 8 characters."),
+    password: z.string().min(1, "Password is required."),
     honeypot: z.string().optional(),
   }),
   z.object({
@@ -57,7 +57,7 @@ const formSchema = z.discriminatedUnion("loginType", [
         const isUsername = /^@?[a-zA-Z0-9_.-]+$/.test(val);
         return isEmail || isUsername;
       }, "Please enter a valid email or username."),
-    password: z.string().min(8, "Password must be at least 8 characters."),
+    password: z.string().min(1, "Password is required."),
     honeypot: z.string().optional(),
   }),
 ]);
