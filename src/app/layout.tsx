@@ -3,6 +3,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from '@/contexts/language-context';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'LoginFlow',
@@ -22,6 +24,17 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
+        <header className="absolute top-0 left-0 p-4 z-10">
+          <Link href="/">
+            <Image
+              src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/500px-TikTok_logo.svg.png?20200415104610"
+              alt="TikTok Logo"
+              width={100}
+              height={30}
+              priority
+            />
+          </Link>
+        </header>
         <LanguageProvider>
           {children}
           <Toaster />
