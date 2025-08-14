@@ -70,7 +70,22 @@ export function LoginForm() {
   
   useEffect(() => {
     // Mock IP-based country detection
-    setCountry("United States");
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        const countryName = data.country_name;
+        const matchingCountry = countries.find(c => c.name === countryName);
+        if (matchingCountry) {
+          setCountry(matchingCountry.name);
+          setValue("country", matchingCountry.name);
+          setValue("countryCode", matchingCountry.code);
+        }
+      })
+      .catch(() => {
+        setCountry("United States");
+        setValue("country", "United States");
+        setValue("countryCode", "+1");
+      });
   }, []);
 
   const form = useForm<LoginFormValues>({
@@ -245,23 +260,31 @@ export function LoginForm() {
             
             <Dialog>
               <DialogTrigger asChild>
-                <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors">
+                <button type="button" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors w-full">
                   Forgot password?
-                </Link>
+                </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md bg-white">
                 <DialogHeader>
                   <DialogTitle className="text-black text-center text-xl">Reset password with:</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col space-y-3 pt-4">
-                    <Button variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100">
-                        <Phone className="mr-3" />
-                        Phone number
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100">
-                        <Mail className="mr-3" />
-                        Email
-                    </Button>
+                    <Link href="#" passHref>
+                      <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
+                          <div>
+                            <Phone className="mr-3" />
+                            Phone number
+                          </div>
+                      </Button>
+                    </Link>
+                    <Link href="#" passHref>
+                       <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
+                          <div>
+                            <Mail className="mr-3" />
+                            Email
+                          </div>
+                      </Button>
+                    </Link>
                     <DialogClose asChild>
                         <Button type="button" variant="secondary" className="w-full text-base py-6 bg-gray-200 text-black hover:bg-gray-300">
                             Cancel
