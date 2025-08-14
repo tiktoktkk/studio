@@ -1,0 +1,272 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+
+const formSchema = z.discriminatedUnion("loginType", [
+  z.object({
+    loginType: z.literal("phone"),
+    countryCode: z.string().min(1, "Country code is required"),
+    phone: z.string().regex(/^\d{10}$/, "Please enter a valid 10-digit phone number."),
+    password: z.string().min(8, "Password must be at least 8 characters."),
+  }),
+  z.object({
+    loginType: z.literal("email"),
+    identifier: z.string().min(1, "Email or username is required.")
+      .refine(val => {
+        const isEmail = z.string().email().safeParse(val).success;
+        const isUsername = /^@?[a-zA-Z0-9_.-]+$/.test(val);
+        return isEmail || isUsername;
+      }, "Please enter a valid email or username."),
+    password: z.string().min(8, "Password must be at least 8 characters."),
+  }),
+]);
+
+type LoginFormValues = z.infer<typeof formSchema>;
+
+const countries = [
+  { code: "+1", name: "United States" },
+  { code: "+44", name: "United Kingdom" },
+  { code: "+91", name: "India" },
+  { code: "+81", name: "Japan" },
+  { code: "+61", name: "Australia" },
+];
+
+export function LoginForm() {
+  const [activeTab, setActiveTab] = useState("phone");
+  const [showPassword, setShowPassword] = useState(false);
+  const [country, setCountry] = useState("United States");
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    // Mock IP-based country detection
+    setCountry("United States");
+  }, []);
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      loginType: "phone",
+      countryCode: "+1",
+      phone: "",
+      password: "",
+    },
+  });
+
+  const { control, handleSubmit, formState: { errors, isSubmitting }, reset, setError } = form;
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setShowPassword(false);
+    if (value === "phone") {
+      reset({
+        loginType: "phone",
+        countryCode: "+1",
+        phone: "",
+        password: "",
+      });
+    } else {
+      reset({
+        loginType: "email",
+        identifier: "",
+        password: "",
+      });
+    }
+  };
+
+  async function onSubmit(values: LoginFormValues) {
+    // Mock Server Action
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    if (values.password.toLowerCase() === 'password' || values.password === 'password123') { // Simulate failure
+        toast({
+            title: "Login Failed",
+            description: "Incorrect password. Please try again.",
+            variant: "destructive",
+        });
+        setError("password", { type: "manual", message: "Password incorrect" });
+    } else {
+        toast({
+            title: "Login Successful",
+            description: "Welcome back! Redirecting...",
+        });
+        // In a real app: router.push('/home');
+    }
+  }
+
+  const PasswordInput = ({ fieldName }: { fieldName: `password` }) => (
+    <FormField
+      control={control}
+      name={fieldName}
+      render={({ field }) => (
+        <FormItem>
+          <div className="relative">
+            <FormControl>
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                {...field}
+                aria-invalid={!!errors[fieldName]}
+                className="pr-10"
+              />
+            </FormControl>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute inset-y-0 right-0 h-full text-muted-foreground hover:bg-transparent"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
+          </div>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+
+  return (
+    <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold font-headline">Log in to LoginFlow</h1>
+        <p className="text-sm text-muted-foreground mt-2">
+          Manage your account, check notifications, comment on videos, and more.
+        </p>
+      </div>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="phone">Phone</TabsTrigger>
+          <TabsTrigger value="email">Email / Username</TabsTrigger>
+        </TabsList>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
+            <TabsContent value="phone" className="m-0 space-y-4">
+              <div className="flex items-start gap-2">
+                <FormField
+                  control={control}
+                  name="countryCode"
+                  render={({ field }) => (
+                    <FormItem className="w-[110px]">
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Code" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {countries.map((c) => (
+                            <SelectItem key={c.name} value={c.code}>
+                              {c.code}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input type="tel" placeholder="Phone number" {...field} autoFocus />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <PasswordInput fieldName="password" />
+            </TabsContent>
+            <TabsContent value="email" className="m-0 space-y-4">
+              <FormField
+                control={control}
+                name="identifier"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input type="text" placeholder="Email or username" {...field} autoFocus />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <PasswordInput fieldName="password" />
+            </TabsContent>
+            
+            <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors">
+              Forgot password?
+            </Link>
+            
+            <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
+              {isSubmitting ? "Logging in..." : "Log in"}
+            </Button>
+          </form>
+        </Form>
+      </Tabs>
+
+      <div className="text-xs text-center text-muted-foreground pt-4">
+         <p>
+          By continuing with an account located in{" "}
+          <Select onValueChange={setCountry} value={country}>
+            <SelectTrigger className="inline-flex w-auto p-0 h-auto border-none shadow-none focus:ring-0 bg-transparent text-primary hover:underline">
+                <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((c) => (
+                <SelectItem key={c.name} value={c.name}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          , you agree to our{" "}
+          <Link href="#" className="underline hover:text-primary">
+            Terms of Service
+          </Link>{" "}
+          and acknowledge that you have read our{" "}
+          <Link href="#" className="underline hover:text-primary">
+            Privacy Policy
+          </Link>
+          .
+        </p>
+      </div>
+
+      <div className="mt-4 p-4 border-t text-center">
+        <p className="text-sm text-muted-foreground">
+          Don’t have an account?{" "}
+          <Link href="#" className="text-primary hover:text-accent font-bold">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
