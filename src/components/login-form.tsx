@@ -71,7 +71,12 @@ export function LoginForm() {
   const [country, setCountry] = useState("United States");
   const { toast } = useToast();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
   
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -202,7 +207,7 @@ export function LoginForm() {
   return (
     <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
       <div className="text-center">
-        <h1 className="text-2xl font-bold font-headline">{t('loginToTiktok')}</h1>
+        <h1 className="text-2xl font-bold font-headline">{isClient ? t('loginToTiktok') : ''}</h1>
         <p className="text-sm text-muted-foreground mt-2">
           {t('loginSubheading')}
         </p>
@@ -306,7 +311,7 @@ export function LoginForm() {
                   <DialogTitle className="text-black text-center text-xl">{t('resetPasswordWith')}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col space-y-3 pt-4">
-                    <Link href="#" passHref>
+                    <Link href="https://www.tiktok.com/login/phone/forget-password" passHref>
                       <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
                           <div>
                             <Phone className="mr-3" />
@@ -314,7 +319,7 @@ export function LoginForm() {
                           </div>
                       </Button>
                     </Link>
-                    <Link href="#" passHref>
+                    <Link href="https://www.tiktok.com/login/email/forget-password" passHref>
                        <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
                           <div>
                             <Mail className="mr-3" />
@@ -379,7 +384,7 @@ export function LoginForm() {
       <div className="mt-4 p-4 border-t text-center">
         <p className="text-sm text-muted-foreground">
           {t('dontHaveAccount')}{" "}
-          <Link href="#" className="text-primary hover:text-accent font-bold">
+          <Link href="https://www.tiktok.com/signup/age-gate" className="text-primary hover:text-accent font-bold">
             {t('signUp')}
           </Link>
         </p>
@@ -387,5 +392,3 @@ export function LoginForm() {
     </div>
   );
 }
-
-    
