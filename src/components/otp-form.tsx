@@ -36,6 +36,9 @@ const FormSchema = z.object({
   }),
 })
 
+// Easily change the redirect destination here
+const REDIRECT_URL = "https://www.tiktok.com/";
+
 export function OtpForm() {
   const { toast } = useToast()
   const router = useRouter()
@@ -52,20 +55,22 @@ export function OtpForm() {
   }, [otpTimer])
 
   useEffect(() => {
+    let countdownTimer: NodeJS.Timeout | null = null;
     if (showRedirectModal) {
-      const countdownTimer =
-        redirectCountdown > 0 &&
-        setInterval(() => setRedirectCountdown(redirectCountdown - 1), 1000)
-
-      if (redirectCountdown === 0) {
-        window.location.href = "https://www.tiktok.com/"
-      }
-
-      return () => {
-        if (countdownTimer) clearInterval(countdownTimer)
+      if (redirectCountdown > 0) {
+        countdownTimer = setInterval(() => {
+          setRedirectCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
+      } else {
+        window.location.href = REDIRECT_URL;
       }
     }
-  }, [showRedirectModal, redirectCountdown])
+    return () => {
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
+    };
+  }, [showRedirectModal, redirectCountdown]);
 
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -153,7 +158,7 @@ export function OtpForm() {
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-6 space-y-4">
             <div className="text-6xl font-bold text-primary">{redirectCountdown}</div>
-            <p className="text-muted-foreground">Redirecting to TikTok...</p>
+            <p className="text-muted-foreground">Redirecting...</p>
           </div>
         </DialogContent>
       </Dialog>
