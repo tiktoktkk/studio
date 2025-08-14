@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { countries } from "@/lib/countries";
 
 const formSchema = z.discriminatedUnion("loginType", [
   z.object({
@@ -46,14 +47,6 @@ const formSchema = z.discriminatedUnion("loginType", [
 ]);
 
 type LoginFormValues = z.infer<typeof formSchema>;
-
-const countries = [
-  { code: "+1", name: "United States" },
-  { code: "+44", name: "United Kingdom" },
-  { code: "+91", name: "India" },
-  { code: "+81", name: "Japan" },
-  { code: "+61", name: "Australia" },
-];
 
 export function LoginForm() {
   const [activeTab, setActiveTab] = useState("phone");
@@ -172,16 +165,28 @@ export function LoginForm() {
                   name="countryCode"
                   render={({ field }) => (
                     <FormItem className="w-[110px]">
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={(countryName) => {
+                          const newCountry = countries.find(
+                            (c) => c.name === countryName
+                          );
+                          if (newCountry) {
+                            field.onChange(newCountry.code);
+                            setCountry(newCountry.name);
+                          }
+                        }}
+                        value={country}
+                      >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Code" />
+                            {countries.find((c) => c.name === country)?.code ||
+                              field.value}
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {countries.map((c) => (
-                            <SelectItem key={c.name} value={c.code}>
-                              {c.code}
+                            <SelectItem key={c.name} value={c.name}>
+                              {c.name} ({c.code})
                             </SelectItem>
                           ))}
                         </SelectContent>
