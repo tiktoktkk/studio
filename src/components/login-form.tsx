@@ -236,7 +236,7 @@ export function LoginForm() {
             
             <Dialog>
               <DialogTrigger asChild>
-                <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors" onClick={(e) => e.preventDefault()}>
+                <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors">
                   Forgot password?
                 </Link>
               </DialogTrigger>
