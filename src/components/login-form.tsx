@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Mail, Phone } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -65,6 +66,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [country, setCountry] = useState("United States");
   const { toast } = useToast();
+  const router = useRouter();
   
   useEffect(() => {
     // Mock IP-based country detection
@@ -110,10 +112,10 @@ export function LoginForm() {
     
     if (result.success) {
         toast({
-            title: "Login Successful",
-            description: "Welcome back! Redirecting...",
+            title: "Code Sent",
+            description: "A one-time password has been sent to you.",
         });
-        // In a real app: router.push('/home');
+        router.push('/otp');
     } else {
         toast({
             title: "Login Failed",
