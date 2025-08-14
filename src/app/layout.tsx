@@ -9,6 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'LoginFlow',
   description: 'A modern, secure, and user-friendly login experience.',
+  icons: {
+    icon: 'https://static.vecteezy.com/system/resources/previews/016/716/450/non_2x/tiktok-icon-free-png.png',
+  },
 };
 
 export default function RootLayout({
