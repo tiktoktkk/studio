@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { countries } from "@/lib/countries";
 
@@ -31,7 +39,7 @@ const formSchema = z.discriminatedUnion("loginType", [
   z.object({
     loginType: z.literal("phone"),
     countryCode: z.string().min(1, "Country code is required"),
-    phone: z.string().regex(/^\d{10}$/, "Please enter a valid 10-digit phone number."),
+    phone: z.string().regex(/^\d{1,15}$/, "Please enter a valid phone number."),
     password: z.string().min(8, "Password must be at least 8 characters."),
   }),
   z.object({
@@ -74,10 +82,11 @@ export function LoginForm() {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     setShowPassword(false);
+    const selectedCountry = countries.find(c => c.name === country);
     if (value === "phone") {
       reset({
         loginType: "phone",
-        countryCode: "+1",
+        countryCode: selectedCountry?.code || "+1",
         phone: "",
         password: "",
       });
@@ -179,8 +188,7 @@ export function LoginForm() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            {countries.find((c) => c.name === country)?.code ||
-                              field.value}
+                            <SelectValue placeholder="Country" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -226,10 +234,34 @@ export function LoginForm() {
               <PasswordInput fieldName="password" />
             </TabsContent>
             
-            <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors">
-              Forgot password?
-            </Link>
-            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Link href="#" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors" onClick={(e) => e.preventDefault()}>
+                  Forgot password?
+                </Link>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md bg-white">
+                <DialogHeader>
+                  <DialogTitle className="text-black text-center text-xl">Reset password with:</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col space-y-3 pt-4">
+                    <Button variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100">
+                        <Phone className="mr-3" />
+                        Phone number
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100">
+                        <Mail className="mr-3" />
+                        Email
+                    </Button>
+                    <DialogClose asChild>
+                        <Button type="button" variant="secondary" className="w-full text-base py-6 bg-gray-200 text-black hover:bg-gray-300">
+                            Cancel
+                        </Button>
+                    </DialogClose>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
               {isSubmitting ? "Logging in..." : "Log in"}
             </Button>
