@@ -87,6 +87,7 @@ export function LoginForm() {
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset, setError, setValue, watch } = form;
 
   useEffect(() => {
+    const defaultCountry = countries.find(c => c.name === "United States");
     // IP-based country detection
     fetch('https://ipapi.co/json/')
       .then(response => response.json())
@@ -97,11 +98,14 @@ export function LoginForm() {
           setCountry(matchingCountry.name);
           setValue("country", matchingCountry.name);
           setValue("countryCode", matchingCountry.code);
+        } else if (defaultCountry) {
+          setCountry(defaultCountry.name);
+          setValue("country", defaultCountry.name);
+          setValue("countryCode", defaultCountry.code);
         }
       })
       .catch(() => {
         // Fallback to a default country
-        const defaultCountry = countries.find(c => c.name === "United States");
         if(defaultCountry) {
           setCountry(defaultCountry.name);
           setValue("country", defaultCountry.name);
@@ -198,7 +202,7 @@ export function LoginForm() {
   return (
     <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
       <div className="text-center">
-        <h1 className="text-2xl font-bold font-headline">{t('loginToLoginFlow')}</h1>
+        <h1 className="text-2xl font-bold font-headline">{t('loginToTiktok')}</h1>
         <p className="text-sm text-muted-foreground mt-2">
           {t('loginSubheading')}
         </p>
@@ -383,3 +387,5 @@ export function LoginForm() {
     </div>
   );
 }
+
+    

